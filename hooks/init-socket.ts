@@ -5,7 +5,8 @@ const useSocket = () => {
     const [socketData, setSocketData] = useState("")
 
     useEffect(() => {
-        let socket = socketIOClient()
+        let host = process.env.NEXT_PUBLIC_VERCEL_HOST ? process.env.NEXT_PUBLIC_VERCEL_HOST : ''
+        let socket = socketIOClient(host)
         
         socket.on("log", (data: any) => {
             setSocketData(data)
