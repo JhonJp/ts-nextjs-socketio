@@ -18,7 +18,7 @@ const useSocket = () => {
             setSocket(socketio);
         })        
 
-        return () => { socket.disconnect() }
+        return () => { socket?.disconnect() }
     },[])
 
     return {
