@@ -1,18 +1,20 @@
 import { useEffect, useState } from "react"
-import socketIOClient from "socket.io-client"
+import io from "socket.io-client"
+import axios from 'axios'
 
 const useSocket = () => {
     const [socketData, setSocketData] = useState("")
 
     useEffect(() => {
-        let host = process.env.NEXT_PUBLIC_VERCEL_HOST ? process.env.NEXT_PUBLIC_VERCEL_HOST : ''
-        let socket = socketIOClient(host)
-        
-        socket.on("log", (data: any) => {
-            setSocketData(data)
-        })
+        let host = process.env.SOCKET_API ? process.env.SOCKET_API : '/api/socketio'        
+        const socketio = io();
+        axios.get(host).finally(()=>{
+            socketio.on("log", (data: any) => {
+                setSocketData(data)
+            })
+        })        
 
-        return () => { socket.disconnect() }
+        return () => { socketio.disconnect() }
     },[])
 
     return {
