@@ -4,17 +4,21 @@ import axios from 'axios'
 
 const useSocket = () => {
     const [socketData, setSocketData] = useState("")
-
+    const [socket, setSocket] = useState<any>(null)
     useEffect(() => {
-        let host = process.env.SOCKET_API ? process.env.SOCKET_API : '/api/socketio'        
-        const socketio = io();
-        axios.get(host).finally(()=>{
+        let host = process.env.SOCKET_API ? process.env.SOCKET_API : '/api/socketio'  
+        axios.get(host).finally(()=>{      
+            const socketio = io();
             socketio.on("log", (data: any) => {
                 setSocketData(data)
             })
+            socketio.on('disconnect', () => {
+                console.log('disconnect');
+            });
+            setSocket(socketio);
         })        
 
-        return () => { socketio.disconnect() }
+        return () => { socket.disconnect() }
     },[])
 
     return {
