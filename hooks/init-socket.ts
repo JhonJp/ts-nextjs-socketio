@@ -5,9 +5,14 @@ const useSocket = () => {
     const [socketData, setSocketData] = useState("")
 
     useEffect(() => {
-        let host = `${process.env.NEXT_PUBLIC_HOST}`
-        const socket = socketIOClient(host)
-        socket.on("log", data => {
+        let host = process.env.NEXT_PUBLIC_HOST
+        let socket: any
+        if(host) {
+            socket = socketIOClient(host)
+        } else {
+            socket = socketIOClient()
+        }
+        socket.on("log", (data: any) => {
             setSocketData(data)
         })
 
