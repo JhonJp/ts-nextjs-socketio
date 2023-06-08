@@ -1,18 +1,41 @@
 const dotenv = require('dotenv')
-const socketio = require('socket.io')
+const socketIo = require('socket.io')
 dotenv.config()
 const { createServer } = require('http')
 const next = require('next')
 
-const port = process.env.PORT || 3005
+const port = process.env.NEXT_PUBLIC_PORT || 3005
 const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev })
 const handle = app.getRequestHandler()
 
 app.prepare().then(() => {
-    createServer((req, res) => {
+    let server = createServer((req, res) => {
         handle(req, res)
-    }).listen(port, (err) => {
+    })
+    const io = socketIo(server);
+
+    let interval;
+
+    io.on("connection", (socket) => {
+        console.log("New client connected")
+        if (interval) {
+          clearInterval(interval)
+        }
+        interval = setInterval(() => getApiAndEmit(socket), 1000)
+        socket.on("disconnect", () => {
+          console.log("Client disconnected")
+          clearInterval(interval)
+        });
+    });
+      
+    const getApiAndEmit = socket => {
+        const response = new Date()
+        // Emitting a new message. Will be consumed by the client
+        socket.emit("log", response)
+    };
+    
+    server.listen(port, (err) => {
         if (err) throw err
         console.log(`> Ready on <http://localhost>:${port}`)
     })

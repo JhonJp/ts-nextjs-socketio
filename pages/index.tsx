@@ -2,11 +2,13 @@ import Head from 'next/head'
 import { Inter } from 'next/font/google'
 import styles from '@/styles/Home.module.css'
 import useSocket from '@/hooks/init-socket'
+import { useEffect } from 'react'
 
 const inter = Inter({ subsets: ['latin'] })
 
 const Index = () => {
   const socket = useSocket()
+
   return (
     <>
       <Head>
