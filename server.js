@@ -13,7 +13,7 @@ app.prepare().then(() => {
         handle(req, res)
     })
     
-    const io = require('socket.io')(server)
+    const io = require('socket.io')(server, { path: '/socket.io/'})
 
     let interval;
 
