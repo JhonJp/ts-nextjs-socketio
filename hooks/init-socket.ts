@@ -5,7 +5,7 @@ const useSocket = () => {
     const [socketData, setSocketData] = useState("")
 
     useEffect(() => {
-        let host = `${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT ? process.env.NEXT_PUBLIC_PORT : 3005}`
+        let host = `${process.env.NEXT_PUBLIC_HOST}`
         const socket = socketIOClient(host)
         socket.on("log", data => {
             setSocketData(data)
