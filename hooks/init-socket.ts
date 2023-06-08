@@ -8,7 +8,7 @@ const useSocket = () => {
         let host = process.env.NEXT_PUBLIC_HOST
         let socket: any
         if(host) {
-            socket = io(host)
+            socket = io(host, { path: '/socket.io/' })
         }
         socket.on("log", (data: any) => {
             setSocketData(data)
