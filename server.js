@@ -9,11 +9,11 @@ const app = next({ dev })
 const handle = app.getRequestHandler()
 
 app.prepare().then(() => {
-    let server = createServer((req, res) => {
+    const server = createServer((req, res) => {
         handle(req, res)
     })
     
-    const io = require('socket.io')(server, { path: '/socket.io/'})
+    const io = require('socket.io')(server, { path: '/socket.io'})
 
     let interval;
 
@@ -37,6 +37,6 @@ app.prepare().then(() => {
     
     server.listen(port, (err) => {
         if (err) throw err
-        console.log(`> Ready on <http://localhost>:${port}`)
+        console.info(`> Ready on <http://localhost>:${port}`)
     })
 })
