@@ -1,43 +1,43 @@
 const dotenv = require('dotenv')
 dotenv.config()
-const { createServer } = require('http')
 const next = require('next')
 
-const port = process.env.NEXT_PUBLIC_PORT || 3005
-const hostname = process.env.NEXT_PUBLIC_HOST
-const dev = process.env.NODE_ENV !== 'production'
-const app = next({ dev, hostname, port })
-const handle = app.getRequestHandler()
+const express = require('express')
+const httpM = require('http')
+const socketIOM = require('socket.io');
 
-app.prepare().then(() => {
-    const server = createServer((req, res) => {
-        handle(req, res)
-    })
-    
-    const io = require('socket.io')(server, { path: '/socket.io/'})
+const port = parseInt(process.env.PORT || '3000', 10);
+const dev = process.env.NODE_ENV !== 'production';
+const nextApp = next({ dev });
+const nextHandler = nextApp.getRequestHandler();
+
+nextApp.prepare().then(async() => {
+    const app = express();
+    const server = httpM.createServer(app);
+    const io = new socketIOM.Server();
+    io.attach(server);
 
     let interval;
 
-    io.on("connection", (socket) => {
-        console.info("New client connected")
-        if (interval) {
-          clearInterval(interval)
-        }
-        interval = setInterval(() => getApiAndEmit(socket), 1000)
-        socket.on("disconnect", () => {
-          console.info("Client disconnected")
-          clearInterval(interval)
-        });
+    app.get('/hello', async (_, res) => {
+        res.send('Hello World')
     });
-      
-    const getApiAndEmit = socket => {
-        const response = new Date()
-        // Emitting a new message. Will be consumed by the client
-        socket.emit("log", response)
-    };
-    
-    server.listen(port, (err) => {
-        if (err) throw err
-        console.info(`> Ready on <http://localhost>:${port}`)
-    })
-})
+
+    io.on('connection', (socket) => {
+        console.log('connection');
+        if (interval) {
+            clearInterval(interval);
+        }
+        interval = setInterval(() => socket.emit("log", new Date()), 1000)
+
+        socket.on('disconnect', () => {
+            console.log('client disconnected');
+        })
+    });
+
+    app.all('*', (req, res) => nextHandler(req, res));
+
+    server.listen(port, () => {
+        console.log(`> Ready on http://localhost:${port}`);
+    });
+});
