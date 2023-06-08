@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import socketIOClient from "socket.io-client"
+import { io } from "socket.io-client"
 
 const useSocket = () => {
     const [socketData, setSocketData] = useState("")
@@ -8,9 +8,7 @@ const useSocket = () => {
         let host = process.env.NEXT_PUBLIC_HOST
         let socket: any
         if(host) {
-            socket = socketIOClient(host)
-        } else {
-            socket = socketIOClient()
+            socket = io(host)
         }
         socket.on("log", (data: any) => {
             setSocketData(data)
