@@ -4,8 +4,9 @@ const { createServer } = require('http')
 const next = require('next')
 
 const port = process.env.NEXT_PUBLIC_PORT || 3005
+const hostname = process.env.NEXT_PUBLIC_HOST
 const dev = process.env.NODE_ENV !== 'production'
-const app = next({ dev })
+const app = next({ dev, hostname, port })
 const handle = app.getRequestHandler()
 
 app.prepare().then(() => {
@@ -13,7 +14,7 @@ app.prepare().then(() => {
         handle(req, res)
     })
     
-    const io = require('socket.io')(server, { path: '/socket.io'})
+    const io = require('socket.io')(server, { path: '/socket.io/'})
 
     let interval;
 
