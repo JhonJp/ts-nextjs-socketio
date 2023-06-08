@@ -1,5 +1,4 @@
 const dotenv = require('dotenv')
-const socketIo = require('socket.io')
 dotenv.config()
 const { createServer } = require('http')
 const next = require('next')
@@ -13,7 +12,8 @@ app.prepare().then(() => {
     let server = createServer((req, res) => {
         handle(req, res)
     })
-    const io = socketIo(server);
+    
+    const io = require('socket.io')(server)
 
     let interval;
 
