@@ -18,13 +18,13 @@ app.prepare().then(() => {
     let interval;
 
     io.on("connection", (socket) => {
-        console.log("New client connected")
+        console.info("New client connected")
         if (interval) {
           clearInterval(interval)
         }
         interval = setInterval(() => getApiAndEmit(socket), 1000)
         socket.on("disconnect", () => {
-          console.log("Client disconnected")
+          console.info("Client disconnected")
           clearInterval(interval)
         });
     });
